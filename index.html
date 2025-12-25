@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhi Street Food Recommender | Kiro Local Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #091e7b 0%, #9d0b0b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: rgb(247, 245, 245);
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dba6a6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #233dbe;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            cursor: pointer;
+        }
+
+        .budget-display {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            grid-column: 1 / -1;
+        }
+
+        .food-item {
+            background: linear-gradient(135deg, #758aa9 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .food-item h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .food-details {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .detail-badge {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .description {
+            color: #555;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍛 Delhi Street Food Recommender</h1>
+            <p>Discover authentic Delhi street food based on your preferences</p>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>Your Preferences</h2>
+                <form id="foodForm">
+                    <div class="form-group">
+                        <label for="area">📍 Which area are you in?</label>
+                        <select id="area" required>
+                            <option value="">Select an area</option>
+                            <option value="chandni-chowk">Chandni Chowk</option>
+                            <option value="connaught-place">Connaught Place</option>
+                            <option value="karol-bagh">Karol Bagh</option>
+                            <option value="sarojini-nagar">Sarojini Nagar</option>
+                            <option value="lajpat-nagar">Lajpat Nagar</option>
+                            <option value="any">Any Area</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mealType">🕐 What time is it?</label>
+                        <select id="mealType" required>
+                            <option value="">Select meal time</option>
+                            <option value="breakfast">Breakfast (7-11 AM)</option>
+                            <option value="lunch">Lunch (12-3 PM)</option>
+                            <option value="snacks">Snacks (4-7 PM)</option>
+                            <option value="dinner">Dinner (7-10 PM)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="preference">😋 What are you craving?</label>
+                        <select id="preference" required>
+                            <option value="">Select preference</option>
+                            <option value="spicy">Spicy & Savory</option>
+                            <option value="sweet">Sweet</option>
+                            <option value="tangy">Tangy & Chaat</option>
+                            <option value="full-meal">Full Meal</option>
+                            <option value="beverage">Drinks & Beverages</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">💰 Your Budget</label>
+                        <input type="range" id="budget" min="20" max="300" value="100" step="10">
+                        <div class="budget-display">₹<span id="budgetValue">100</span></div>
+                    </div>
+
+                    <button type="submit" class="btn">🔍 Find Food!</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>About This App</h2>
+                <p style="line-height: 1.8; color: #555;">
+                    <strong>🎯 Purpose:</strong> This app helps you discover authentic Delhi street food based on your location, time, cravings, and budget.
+                </p>
+                <p style="line-height: 1.8; color: #555; margin-top: 15px;">
+                    <strong>🤖 Powered by Kiro AI:</strong> Uses custom context about Delhi's street food culture to make intelligent recommendations.
+                </p>
+                <p style="line-height: 1.8; color: #555; margin-top: 15px;">
+                    <strong>✨ Features:</strong>
+                </p>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #555; line-height: 2;">
+                    <li>Location-based suggestions</li>
+                    <li>Time-appropriate recommendations</li>
+                    <li>Budget-friendly options</li>
+                    <li>Authentic local context</li>
+                </ul>
+            </div>
+
+            <div class="card results" id="results" style="display: none;">
+                <h2>🍴 Recommended for You</h2>
+                <div id="foodList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Food database based on product.md context
+        const foodDatabase = {
+            'chandni-chowk': {
+                breakfast: [
+                    { name: 'Bedmi Puri with Aloo', price: 50, type: 'spicy', desc: 'Deep-fried bread with spiced potato curry. A traditional Old Delhi breakfast favorite.' },
+                    { name: 'Famous Jalebis', price: 40, type: 'sweet', desc: 'Crispy, syrupy spirals from the legendary Old Famous Jalebi Wala.' },
+                    { name: 'Paranthe (Various)', price: 60, type: 'spicy', desc: 'Stuffed flatbreads from Paranthe Wali Gali. Try aloo, gobi, or paneer varieties.' }
+                ],
+                snacks: [
+                    { name: 'Golgappa', price: 30, type: 'tangy', desc: 'Crispy shells filled with tangy spiced water. The ultimate Delhi chaat experience.' },
+                    { name: 'Aloo Tikki Chaat', price: 40, type: 'tangy', desc: 'Spiced potato patties with yogurt and chutneys.' },
+                    { name: 'Hot Samosas', price: 20, type: 'spicy', desc: 'Crispy triangular pastries with spiced potato filling.' }
+                ],
+                lunch: [
+                    { name: 'Chole Bhature', price: 70, type: 'full-meal', desc: 'Spicy chickpeas with fluffy fried bread. A hearty Punjabi meal.' }
+                ],
+                dinner: [
+                    { name: 'Butter Chicken Roll', price: 100, type: 'full-meal', desc: 'Popular street wrap with creamy butter chicken filling.' }
+                ]
+            },
+            'connaught-place': {
+                snacks: [
+                    { name: 'Steamed Momos', price: 60, type: 'spicy', desc: 'Tender dumplings filled with vegetables, served with spicy chutney.' },
+                    { name: 'Papdi Chaat', price: 50, type: 'tangy', desc: 'Crispy wafers topped with yogurt, chutneys, and spices.' },
+                    { name: 'Fresh Fruit Juice', price: 60, type: 'beverage', desc: 'Seasonal fresh fruit juices, cold and refreshing.' }
+                ],
+                lunch: [
+                    { name: 'Veg Rolls', price: 80, type: 'full-meal', desc: 'Rolled wraps with spiced vegetables and sauces.' },
+                    { name: 'Momos Platter', price: 90, type: 'full-meal', desc: 'Combination of steamed and fried momos with multiple sauces.' }
+                ],
+                dinner: [
+                    { name: 'Paneer Roll', price: 100, type: 'full-meal', desc: 'Grilled paneer wrapped in soft paratha with mint chutney.' }
+                ]
+            },
+            'karol-bagh': {
+                breakfast: [
+                    { name: 'Chole Bhature', price: 60, type: 'full-meal', desc: 'The Karol Bagh specialty - perfectly spiced chole with soft bhature.' },
+                    { name: 'Aloo Puri', price: 40, type: 'spicy', desc: 'Fried bread with potato curry, a lighter breakfast option.' }
+                ],
+                snacks: [
+                    { name: 'Crispy Samosas', price: 25, type: 'spicy', desc: 'Hot, crispy samosas with potato filling and mint chutney.' },
+                    { name: 'Aloo Tikki', price: 35, type: 'tangy', desc: 'Fried potato patties served with tamarind chutney.' },
+                    { name: 'Masala Chai', price: 15, type: 'beverage', desc: 'Hot spiced tea, perfect with snacks.' }
+                ]
+            },
+            'sarojini-nagar': {
+                snacks: [
+                    { name: 'Fried Momos', price: 50, type: 'spicy', desc: 'Crispy fried dumplings, perfect while shopping.' },
+                    { name: 'Veg Sandwich', price: 40, type: 'spicy', desc: 'Grilled sandwich with vegetables and spicy chutney.' },
+                    { name: 'Sugarcane Juice', price: 30, type: 'beverage', desc: 'Fresh pressed sugarcane juice, refreshing and sweet.' }
+                ],
+                lunch: [
+                    { name: 'Quick Thali', price: 80, type: 'full-meal', desc: 'Simple meal with rice, dal, sabzi, and roti.' }
+                ]
+            },
+            'lajpat-nagar': {
+                breakfast: [
+                    { name: 'Masala Dosa', price: 70, type: 'spicy', desc: 'Crispy South Indian crepe with potato filling.' }
+                ],
+                snacks: [
+                    { name: 'Raj Kachori', price: 60, type: 'tangy', desc: 'Large crispy shell filled with yogurt, potatoes, and chutneys.' },
+                    { name: 'Dahi Bhalla', price: 50, type: 'tangy', desc: 'Soft lentil dumplings in creamy yogurt with spices.' }
+                ],
+                lunch: [
+                    { name: 'South Indian Thali', price: 100, type: 'full-meal', desc: 'Complete meal with dosa, idli, sambar, and chutneys.' }
+                ]
+            }
+        };
+
+        // Budget input handler
+        const budgetSlider = document.getElementById('budget');
+        const budgetValue = document.getElementById('budgetValue');
+        
+        budgetSlider.addEventListener('input', function() {
+            budgetValue.textContent = this.value;
+        });
+
+        // Form submission handler
+        document.getElementById('foodForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const area = document.getElementById('area').value;
+            const mealType = document.getElementById('mealType').value;
+            const preference = document.getElementById('preference').value;
+            const budget = parseInt(document.getElementById('budget').value);
+            
+            // Show results section
+            const resultsDiv = document.getElementById('results');
+            const foodList = document.getElementById('foodList');
+            resultsDiv.style.display = 'block';
+            foodList.innerHTML = '<div class="loading">Finding the perfect food for you</div>';
+            
+            // Simulate processing time
+            setTimeout(() => {
+                const recommendations = getRecommendations(area, mealType, preference, budget);
+                displayResults(recommendations);
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 1000);
+        });
+
+        function getRecommendations(area, mealType, preference, budget) {
+            let allFood = [];
+            
+            // Get food from selected area or all areas
+            if (area === 'any') {
+                Object.values(foodDatabase).forEach(areaFood => {
+                    if (areaFood[mealType]) {
+                        allFood = [...allFood, ...areaFood[mealType]];
+                    }
+                });
+            } else {
+                const areaData = foodDatabase[area];
+                if (areaData && areaData[mealType]) {
+                    allFood = areaData[mealType];
+                }
+            }
+            
+            // Filter by preference and budget
+            let filtered = allFood.filter(item => {
+                const matchesPreference = preference === 'full-meal' ? 
+                    item.type === 'full-meal' : 
+                    item.type === preference || item.type === 'spicy';
+                const withinBudget = item.price <= budget;
+                return matchesPreference && withinBudget;
+            });
+            
+            // If no exact matches, show items within budget
+            if (filtered.length === 0) {
+                filtered = allFood.filter(item => item.price <= budget);
+            }
+            
+            return filtered;
+        }
+
+        function displayResults(recommendations) {
+            const foodList = document.getElementById('foodList');
+            
+            if (recommendations.length === 0) {
+                foodList.innerHTML = '<div class="no-results">😕 No matches found. Try adjusting your budget or preferences!</div>';
+                return;
+            }
+            
+            foodList.innerHTML = recommendations.map(item => `
+                <div class="food-item">
+                    <h3><span class="emoji">🍽️</span>${item.name}</h3>
+                    <div class="food-details">
+                        <span class="detail-badge">💰 ₹${item.price}</span>
+                        <span class="detail-badge">🏷️ ${item.type.replace('-', ' ')}</span>
+                    </div>
+                    <p class="description">${item.desc}</p>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
