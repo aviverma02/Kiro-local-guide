@@ -177,6 +177,6 @@ Created for AI for Bharat - Kiro Week 5 Challenge: The Local Guide
 ### Mobile Responsive
 [Mobile view of the application]
 
----
+---    
 
 **Built with ❤️ using Kiro AI | December 2025**
