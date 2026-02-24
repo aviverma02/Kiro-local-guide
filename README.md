@@ -1,6 +1,6 @@
 # 🍛 Delhi Street Food Recommender
 
-**Kiro Week 5 Challenge: The Local Guide**
+**Kiro Week 5 Challenge: The Local Guide**  
 
 A smart street food recommendation system that helps you discover authentic Delhi street food based on your location, time, preferences, and budget. Built with custom context to understand Delhi's rich street food culture.
 
