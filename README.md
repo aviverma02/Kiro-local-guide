@@ -15,7 +15,7 @@ This project addresses the challenge of finding the right street food in Delhi's
 ## ✨ Features
   
 - **Location-Based Recommendations**: Get suggestions for 5 major Delhi areas
-- **Time-Aware Suggestions**: Different recommendations for different meal times
+- **Time-Aware Suggestions**: Different recommendations for different meal times  
 - **Budget Filtering**: Find food within your price range (₹20-₹300)
 - **Preference Matching**: Filter by taste preference and meal type
 - **Rich Local Context**: Powered by authentic Delhi street food knowledge
