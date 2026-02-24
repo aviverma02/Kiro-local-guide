@@ -13,7 +13,7 @@ This project addresses the challenge of finding the right street food in Delhi's
 - Budget constraints
 
 ## ✨ Features
-
+  
 - **Location-Based Recommendations**: Get suggestions for 5 major Delhi areas
 - **Time-Aware Suggestions**: Different recommendations for different meal times
 - **Budget Filtering**: Find food within your price range (₹20-₹300)
